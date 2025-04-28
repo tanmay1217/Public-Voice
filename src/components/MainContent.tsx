@@ -83,11 +83,27 @@ const MainContent: React.FC = () => {
   };
 
   const fetchRedditCommentsFromAPI = async (policyName: string) => {
-    const response = await fetch(
-      `http://localhost:5000/api/reddit_comments?policy=${encodeURIComponent(policyName)}`
-    );
-    if (!response.ok) throw new Error('Failed to fetch Reddit comments');
-    return await response.json();
+    try {
+      const backendUrl = process.env.REACT_APP_BACKEND_URL || 'https://public-voice-backend.onrender.com';
+      const response = await fetch(
+        `${backendUrl}/api/reddit_comments?policy=${encodeURIComponent(policyName)}`
+      );
+      
+      if (!response.ok) {
+        const errorData = await response.json().catch(() => ({}));
+        throw new Error(errorData.message || `HTTP error! status: ${response.status}`);
+      }
+      
+      const data = await response.json();
+      if (data.status === 'error') {
+        throw new Error(data.message || 'Error fetching Reddit comments');
+      }
+      
+      return data.data || [];
+    } catch (error) {
+      console.error('Error fetching Reddit comments:', error);
+      throw new Error(error instanceof Error ? error.message : 'Failed to fetch Reddit comments');
+    }
   };
 
   const analyzeSentiment = (text: string): 'positive' | 'neutral' | 'negative' => {
@@ -109,23 +125,44 @@ const MainContent: React.FC = () => {
   };
 
   const fetchRedditSentiment = async (policyName: string): Promise<SentimentData> => {
-    const keyword = getRedditSearchKeyword(policyName);
-    const comments = await fetchRedditCommentsFromAPI(keyword);
-    let positive = 0, neutral = 0, negative = 0;
-    const analyzedComments = comments.map((comment: any) => {
-      const sentiment = analyzeSentiment(comment.body);
-      if (sentiment === 'positive') positive++;
-      else if (sentiment === 'negative') negative++;
-      else neutral++;
-      return { text: comment.body, sentiment };
-    });
-    const total = positive + neutral + negative || 1;
-    return {
-      positive: (positive / total) * 100,
-      neutral: (neutral / total) * 100,
-      negative: (negative / total) * 100,
-      comments: analyzedComments
-    };
+    try {
+      const keyword = getRedditSearchKeyword(policyName);
+      const comments = await fetchRedditCommentsFromAPI(keyword);
+      
+      if (!comments || comments.length === 0) {
+        return {
+          positive: 0,
+          neutral: 100,
+          negative: 0,
+          comments: []
+        };
+      }
+
+      let positive = 0, neutral = 0, negative = 0;
+      const analyzedComments = comments.map((comment: any) => {
+        const sentiment = analyzeSentiment(comment.body);
+        if (sentiment === 'positive') positive++;
+        else if (sentiment === 'negative') negative++;
+        else neutral++;
+        return { text: comment.body, sentiment };
+      });
+      
+      const total = positive + neutral + negative || 1;
+      return {
+        positive: (positive / total) * 100,
+        neutral: (neutral / total) * 100,
+        negative: (negative / total) * 100,
+        comments: analyzedComments
+      };
+    } catch (error) {
+      console.error('Error in fetchRedditSentiment:', error);
+      return {
+        positive: 0,
+        neutral: 100,
+        negative: 0,
+        comments: []
+      };
+    }
   };
 
   const handleSelectSuggestion = (suggestion: string) => {
