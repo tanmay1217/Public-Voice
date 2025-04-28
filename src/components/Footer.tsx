@@ -23,12 +23,26 @@ const Footer: React.FC = () => {
               <a href="https://github.com/tanmay1217/Public-Voice" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
                 <Github size={20} />
               </a>
-              <div className="relative group">
-                <a href="mailto:Tanmayparashar05@gmail.com" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
-                  <Mail size={20} />
-                </a>
-                <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
-                  Tanmayparashar05@gmail.com
+              <div className="flex gap-6">
+                {/* Contributor 1 */}
+                <div className="relative group">
+                  <a href="mailto:Tanmayparashar05@gmail.com" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <Mail size={20} />
+                  </a>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Tanmay Parashar<br />
+                    Tanmayparashar05@gmail.com
+                  </div>
+                </div>
+                {/* Contributor 2 */}
+                <div className="relative group">
+                  <a href="niteshchaurasia30@gmail.com" className="text-gray-600 dark:text-gray-300 hover:text-blue-600 dark:hover:text-blue-400 transition-colors">
+                    <Mail size={20} />
+                  </a>
+                  <div className="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-800 text-white text-sm rounded opacity-0 group-hover:opacity-100 transition-opacity whitespace-nowrap">
+                    Nitesh Kumar Chaurasia<br />
+                    niteshchaurasia30@gmail.com
+                  </div>
                 </div>
               </div>
             </div>
