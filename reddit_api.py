@@ -15,6 +15,16 @@ reddit = praw.Reddit(
     password = os.getenv('REDDIT_PASSWORD')
 )
 
+@app.route('/')
+def home():
+    return jsonify({
+        'status': 'success',
+        'message': 'Public Voice API is running',
+        'endpoints': {
+            'reddit_comments': '/api/reddit_comments?policy=<policy_name>'
+        }
+    })
+
 @app.route('/api/reddit_comments', methods=['GET'])
 def get_reddit_comments():
     policy = request.args.get('policy')
